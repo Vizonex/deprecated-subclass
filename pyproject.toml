@@ -1,0 +1,34 @@
+[project]
+name = "deprecated-subclass"
+dynamic = ["version"]
+description = "A Type Wrapper for lazily flagging that a class's subclassing capabilities are deprecated."
+readme = "README.md"
+authors = [
+    { name = "Vizonex", email = "VizonexBusiness@gmail.com" }
+]
+requires-python = ">=3.10"
+dependencies = []
+
+[build-system]
+requires = ["setuptools"]
+
+[tool.setuptools.dynamic]
+version = {attr = "deprecated_subclass.__version__"}
+
+[project.urls]
+    homepage = "https://github.com/Vizonex/deprecated-subclass"
+    repository = "https://github.com/Vizonex/deprecated-subclass.git"
+
+[tool.ruff]
+line-length = 79
+indent-width = 4
+target-version = "py310"
+fix = true
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "W",
+    "I",
+    "F"
+]
