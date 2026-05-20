@@ -44,7 +44,7 @@ class deprecated_subclass:
 
         class DeprecatedSubclass:
             @deprecated("deprecated because I wanted to")
-            __init_subclass__(cls):...
+            def __init_subclass__(cls):...
 
     The following setup is better, lazier and makes your
     code look less nasty and you don't even have to define `__init_subclass__`::
