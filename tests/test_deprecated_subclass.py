@@ -50,7 +50,9 @@ def warnings(request: pytest.FixtureRequest) -> type[Warning]:
     ),
     ids=("1", "2", "3"),
 )
-def versions(request: pytest.FixtureRequest) -> tuple[str, tuple[int, ...] | str]:
+def versions(
+    request: pytest.FixtureRequest,
+) -> tuple[str, tuple[int, ...] | str]:
     param = request.param  # type: str | tuple[int, ...]
     return join_version_if_sequence(param), param
 
@@ -68,7 +70,9 @@ def test_different_categories(warnings: type[Warning]) -> None:
             pass
 
 
-def test_removed_in_version(versions: tuple[str, str | tuple[int, ...]]) -> None:
+def test_removed_in_version(
+    versions: tuple[str, str | tuple[int, ...]],
+) -> None:
     o, i = versions  # in/out
     ds = deprecated_subclass("this will be removed soon", removed_in=i)
     assert ds.removed_in == o

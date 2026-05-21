@@ -24,7 +24,7 @@ from typing import TypeVar
 # done in a neat and tidy manner
 
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __author__ = "Vizonex"
 
 
@@ -47,7 +47,8 @@ class deprecated_subclass:
             def __init_subclass__(cls):...
 
     The following setup is better, lazier and makes your
-    code look less nasty and you don't even have to define `__init_subclass__`::
+    code look less nasty and you don't even have to define
+    `__init_subclass__`::
 
         @deprecated_subclass("deprecated because I wanted to")
         class DeprecatedSubclass:
@@ -87,28 +88,42 @@ class deprecated_subclass:
         self.category = category
         self.stacklevel = stacklevel
         self.removed_in = (
-            join_version_if_sequence(removed_in) if removed_in is not None else None
+            join_version_if_sequence(removed_in)
+            if removed_in is not None
+            else None
         )
 
     @property
-    def full_message(self):
+    def full_message(self) -> str:
         """returns full version of the deprecation warning message"""
+        warnings.warn(
+            "the usage of this property might be deprecated in the future",
+            PendingDeprecationWarning,
+        )
         if self.removed_in:
-            return self.message + f" [Removing subclassing in: {self.removed_in}]"
+            return (
+                self.message + f" [Removing subclassing in: {self.removed_in}]"
+            )
+
         return self.message
 
     def __call__(self, arg: _T, /) -> _T:
         """
         Wraps a class type for deprecating the subclassing of it.
 
-        :param self: Description
-        :param arg: the class to wrap to
+        :param arg: the class to wrap.
         :type arg: _T
-        :return: the class object with __init_subclass__ wrapped as being deprecated
+        :return: the class object with `__init_subclass__`
+            wrapped as being deprecated
         :rtype: _T
         """
 
-        msg = self.full_message
+        if self.removed_in:
+            msg = (
+                self.message + f" [Removing subclassing in: {self.removed_in}]"
+            )
+        else:
+            msg = self.message
         category = self.category
         stacklevel = self.stacklevel
         if not isinstance(arg, type):
@@ -130,7 +145,9 @@ class deprecated_subclass:
 
             @functools.wraps(original_init_subclass)
             def __init_subclass__(*args, **kwargs):
-                warnings.warn(msg, category=category, stacklevel=stacklevel + 1)
+                warnings.warn(
+                    msg, category=category, stacklevel=stacklevel + 1
+                )
                 return original_init_subclass(*args, **kwargs)
 
             arg.__init_subclass__ = classmethod(__init_subclass__)
@@ -139,7 +156,9 @@ class deprecated_subclass:
 
             @functools.wraps(original_init_subclass)
             def __init_subclass__(*args, **kwargs):
-                warnings.warn(msg, category=category, stacklevel=stacklevel + 1)
+                warnings.warn(
+                    msg, category=category, stacklevel=stacklevel + 1
+                )
                 return original_init_subclass(*args, **kwargs)
 
             arg.__init_subclass__ = __init_subclass__
